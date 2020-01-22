@@ -1,0 +1,13 @@
+[{
+        "path": "/new-smart-retail",
+        "label": "HomePage"
+    },
+    {
+        "path": "/pos-hardware",
+        "label": "HardwarePage"
+    },
+    {
+        "path": "/super-pos",
+        "label": "SuperPos"
+    }
+]
