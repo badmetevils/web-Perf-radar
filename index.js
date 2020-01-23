@@ -16,7 +16,7 @@ const OUTPUT_DIR = __dirname + "/reports";
 
 const defaultConfigs = {
     host: "http://localhost:4000",
-    device: 'desktop'
+    device: 'desktop',
 };
 
 let args = getCliArgs();
@@ -41,7 +41,11 @@ if (Object.keys(args).length > 0) {
         const generatedConfig = config(defaultConfigs.device);
 
         try {
-            console.log(`[${i + 1}]:(${label}) Measuring performance for ${url} on [${defaultConfigs.device}] device`);
+            console.log('\x1b[36m', `(${i+1}): Running performance audit on ${label}`, '\x1b[0m')
+            console.table({
+                URL: url,
+                DEVICE: defaultConfigs.device
+            });
             await launchChromeAndRunLighthouse(
                 url, {
                     chromeFlags: ["--headless", "--disable-gpu", "--quite"]
@@ -63,18 +67,19 @@ if (Object.keys(args).length > 0) {
                 makeDirIfNotExist(DIR);
                 makeDirIfNotExist(HTML_DIR);
 
-                fs.writeFileSync(CSV_DIR, csv + "\n", {
+                fs.writeFileSync(`${HTML_DIR}/${htmlFileName}`, res[1], err => {
+                    if (err) throw err;
+                });
+
+                fs.writeFileSync(CSV_DIR, csv + `,${HTML_DIR}/${htmlFileName}` + "\n", {
                     'flag': 'a'
                 }, err => {
                     if (err) throw err;
                 });
 
-                fs.writeFileSync(`${HTML_DIR}/${htmlFileName}`, res[1], err => {
-                    if (err) throw err;
-                });
 
+                console.log('CSV:', '\x1b[36m', CSV_DIR, '\x1b[0m', "\n");
             });
-            console.log(`Done.`);
         } catch (error) {
             console.error(error);
         }
